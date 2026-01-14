@@ -8,10 +8,10 @@
 
 set -euo pipefail
 
-# Prune options: keep only cache used in the last 24h.
+# Prune options: keep only cache used in the last 48h.
 # Prefer arrays to avoid word splitting/quoting issues.
-PRUNE_OPTS1=(--filter until=30d --max-used-space 100GB)
-PRUNE_OPTS2=(--filter until=30d --keep-storage 100GB)
+PRUNE_OPTS1=(--filter until=48h --max-used-space 10GB)
+PRUNE_OPTS2=(--filter until=48h --keep-storage 10GB)
 
 echo "==> Docker disk usage BEFORE:"
 docker system df || true

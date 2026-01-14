@@ -1,9 +1,9 @@
-# file: Jenkinsfile
-# author: Michael Moscovitch
-#
-# Copyright (c) 2026 Pathway Communications
-#
-# Licensed under the MIT License. See LICENSE file for details.
+// file: Jenkinsfile
+// author: Michael Moscovitch
+//
+// Copyright (c) 2026 Pathway Communications
+//
+// Licensed under the MIT License. See LICENSE file for details.
 
 pipeline {
   agent any
@@ -12,7 +12,9 @@ pipeline {
   triggers { cron('H 3 1 * *') }  // monthly around 03:00 local
 
   options {
-    timeout(time: 60, unit: 'MINUTES')
+    // Set a timeout of 8 hours. This can take a long time depending on
+    // how much needs to be pruned.
+    timeout(time: 480, unit: 'MINUTES')
     disableConcurrentBuilds()
     buildDiscarder(logRotator(numToKeepStr: '5'))
   }
@@ -51,12 +53,11 @@ pipeline {
       }
     }
 
+    # If Jenkins runs in a container it does not have access
+    # Cleaning logs is optional
     stage('Container logs trim (optional)') {
       steps {
-        sh '''
-          echo "==> Truncating large container JSON logs (safe)"
-          find /var/lib/docker/containers -name "*-json.log" -size +50M -exec truncate -s 0 {} \\;
-        '''
+        sh './scripts/docker-clean-logs.sh'
       }
     }
   }

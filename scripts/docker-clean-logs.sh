@@ -9,6 +9,8 @@
 # run on the docker host to clean up old and large container logs
 containerdir=/var/lib/docker/containers
 if [ -d ${containerdir} ]; then
-    find ${containerdir} -name "*-json.log.?" -mtime +30 -delete
-    find ${containerdir} -name "*-json.log" -size +1M -exec truncate -s 0 {} \;
+    echo "==> Removing old container JSON logs (safe)"
+    find ${containerdir} -type f -name "*-json.log.?" -mtime +30 -delete
+    echo "==> Truncating large container JSON logs (safe)"
+    find ${containerdir} -type f -name "*-json.log" -size +1M -exec truncate -s 0 {} \;
 fi
