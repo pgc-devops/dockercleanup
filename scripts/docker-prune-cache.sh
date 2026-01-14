@@ -10,8 +10,10 @@ set -euo pipefail
 
 # Prune options: keep only cache used in the last 48h.
 # Prefer arrays to avoid word splitting/quoting issues.
-PRUNE_OPTS1=(--filter until=48h --max-used-space 10GB)
-PRUNE_OPTS2=(--filter until=48h --keep-storage 10GB)
+# buildkit v0.17.0+ is required for max-used-space and min-free-space filters
+#PRUNE_OPTS1=(--filter until=48h --max-used-space 50GB)
+PRUNE_OPTS1=(--filter until=48h)
+PRUNE_OPTS2=(--filter until=48h --keep-storage 50GB)
 
 echo "==> Docker disk usage BEFORE:"
 docker system df || true
@@ -28,7 +30,7 @@ if docker buildx version >/dev/null 2>&1; then
 
   echo "==> Pruning Buildx cache (unused records older than 24h)"
   # -a includes internal/frontend helper images; remove if you want to be less aggressive.
-  docker buildx prune -f "${PRUNE_OPTS1[@]}"
+  docker buildx prune -a -f "${PRUNE_OPTS1[@]}"
 
   echo "==> Buildx disk usage AFTER:"
   docker buildx du || true

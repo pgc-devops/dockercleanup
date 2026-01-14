@@ -53,8 +53,8 @@ pipeline {
       }
     }
 
-    # If Jenkins runs in a container it does not have access
-    # Cleaning logs is optional
+    // If Jenkins runs in a container it does not have access
+    // Cleaning logs is optional
     stage('Container logs trim (optional)') {
       steps {
         sh './scripts/docker-clean-logs.sh'
